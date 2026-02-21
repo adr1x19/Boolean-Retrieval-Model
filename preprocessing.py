@@ -36,7 +36,7 @@ def normalization(word):
     return word
   
     
-def is_stopword(word):
+def is_valid_word(word):
     stopwords = [
     "के", "का", "की", "को", "में", "से", "ने", "पर",  
     "है", "हैं", "था", "थी", "थे", "हुआ", "हुए",    
@@ -62,7 +62,7 @@ def tokenization(filename):
                 
                 for t in tokens:
                     t = normalization(t)
-                    if is_stopword(t):
+                    if is_valid_word(t):
                         t = stemmer(t)
                         if t:
                             words.append(t)

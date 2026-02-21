@@ -6,7 +6,7 @@ def create_inverted_index(folder_path):
     inverted_index=defaultdict(dict)
 
     files=[f for f in os.listdir(folder_path) if f.endswith('.txt')]
-    print(files)
+    #print(files)
     counter=1
     mapfile=defaultdict(str)
     #always sort your filename gives a speed up when querying 
@@ -45,7 +45,24 @@ def create_inverted_index(folder_path):
     return inverted_index
 
 #serialize the the inverted index 
+import json
+import os
 
+def save_index_to_disk(inverted_index, filename="inverted_index.json"):
+    with open(filename, "w", encoding="utf-8") as file:
+        json.dump(inverted_index, file, ensure_ascii=False, indent=4)
+    print(f"Index successfully saved to {filename}")
+
+def load_index_from_disk(filename="inverted_index.json"):
+    if not os.path.exists(filename):
+        print(f"Error: {filename} not found.")
+        return {}
+        
+    with open(filename, "r", encoding="utf-8") as file:
+        inverted_index = json.load(file)
+        
+    print(f"Index successfully loaded from {filename}")
+    return inverted_index
 
 
 if __name__=="__main__":

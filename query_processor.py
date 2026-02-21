@@ -1,7 +1,7 @@
 import re
 from collections import defaultdict
 import os 
-from preprocessing import tokenization,normalization,stemmer,is_stopword
+from preprocessing import tokenization,normalization,stemmer,is_valid_word
 from inverted_index import create_inverted_index
 #implement the query 
 inverted_index=create_inverted_index("data/")
@@ -21,7 +21,7 @@ def shunting_yard(phrase,inverted_index,docs):
     raw_tokens=re.findall(pattern,phrase)
     tokens=[]
     for token in raw_tokens:
-        if is_stopword(token):
+        if is_valid_word(token):
             tokens.append(stemmer(normalization(token)))
 
     print(tokens)
@@ -119,7 +119,7 @@ def process_query(user_input,inverted_index):
         raw_tokens=re.findall(word_pattern,user_input)
         tokens=[]
         for token in raw_tokens:
-            if is_stopword(token):
+            if is_valid_word(token):
                 tokens.append(stemmer(normalization(token)))
         
         if not tokens:
@@ -175,6 +175,6 @@ def process_query(user_input,inverted_index):
 
 
 if __name__=="__main__":
-    user_input="इंटरनेट "
+    user_input="रामनाथ OR छत्तीसगढ़ AND सन्दर्भ"
     #print(process_query(user_input,inverted_index))
     print(process_query(user_input,inverted_index))
