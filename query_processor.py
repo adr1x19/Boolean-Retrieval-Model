@@ -1,11 +1,11 @@
 import re
 from collections import defaultdict
 import os 
+import time
 from preprocessing import tokenization,normalization,stemmer,is_valid_word
-from inverted_index import create_inverted_index
-#implement the query 
-inverted_index=create_inverted_index("data/")
-
+from inverted_index import create_inverted_index,save_index_to_disk,load_index_from_disk
+from transliterate import transliterate_to_hindi
+from pathlib import Path
 
 def optimized_sort(phrase):
     pass
@@ -24,7 +24,7 @@ def shunting_yard(phrase,inverted_index,docs):
         if is_valid_word(token):
             tokens.append(stemmer(normalization(token)))
 
-    print(tokens)
+    #print(tokens)
     output=[]
     opstack=[]
     for t in tokens:
@@ -47,7 +47,7 @@ def shunting_yard(phrase,inverted_index,docs):
     
     # solve the boolean query 
     res=[]
-    print(output)
+    #print(output)
     for t in output:
         if t in precedence_table:
             ans=[]
@@ -84,7 +84,8 @@ def shunting_yard(phrase,inverted_index,docs):
             
         else:
            # print(list(inverted_index[t].keys()))
-            res.append(list(inverted_index[t].keys()))
+           
+            res.append(list(inverted_index.get(t, {}).keys()))
     
     return res
             
@@ -169,12 +170,65 @@ def process_query(user_input,inverted_index):
       
 
 
+def measure_query_time(query_text, index):
+  
+    start_time = time.perf_counter() 
+    results = process_query(query_text, index)
+    end_time = time.perf_counter() 
+    processing_time_ms = (end_time - start_time) * 1000 
+    
+    print(f"Query: {query_text}")
+    
+    print(f"Results Found: {len(results)} documents {results}")
+    print(f"Processing Time: {processing_time_ms:.2f} ms")
+    print("-" * 30)
 
+def measure_index_creation(folderpath):
+    start_time=time.perf_counter()
+    inverted_index=create_inverted_index(folderpath)
+    end_time=time.perf_counter()
+    processing_time_ms=(end_time-start_time)*1000
 
+    print("Index was created... \n")
+    print(f"Processing Time: {processing_time_ms:.2f} ms")
+    print("-" * 30)
+    return inverted_index
 
 
 
 if __name__=="__main__":
-    user_input="रामनाथ OR छत्तीसगढ़ AND सन्दर्भ"
-    #print(process_query(user_input,inverted_index))
-    print(process_query(user_input,inverted_index))
+    
+
+    inverted_index_file=Path("inverted_index.json")
+    if(inverted_index_file.is_file()):
+        print("Loading from index...\n")
+        inverted_index=load_index_from_disk("inverted_index.json")
+    else:
+        print("Creating the index...\n")
+        inverted_index=measure_index_creation("data/hindi/")
+        save_index_to_disk(inverted_index)
+    terms=0
+    tokens=0
+    for key,values in inverted_index.items():
+        terms=terms+1
+        for yek,val in values.items():
+            tokens=tokens+val[0]
+
+    print(f"Unique words in corpus:{terms}")
+    print(f"Total words in corpus:{tokens}")
+    print("-" * 30)
+
+
+
+    user_query1="अंग्रेज़ी AND जानकारी AND लिपियाँ"
+    measure_query_time(user_query1,inverted_index)
+
+    user_query2=" आवश्यकता पड़ती है। जिससे विकास"
+    measure_query_time(user_query2,inverted_index)
+    
+    
+    user_query3="raja AND bhArata"
+    user_query3=transliterate_to_hindi(user_query3)
+    print(user_query3)
+    measure_query_time(user_query3,inverted_index)
+

@@ -2,10 +2,18 @@ import math
 import os
 import matplotlib.pyplot as plt
 from collections import defaultdict
-from inverted_index import create_inverted_index
+from inverted_index import create_inverted_index,save_index_to_disk,load_index_from_disk
 from preprocessing import tokenization
+from pathlib import Path
 
-inverted_index = create_inverted_index("data2/")
+inverted_index_file=Path("inverted_index.json")
+if(inverted_index_file.is_file()):
+    print("Loading from index...\n")
+    inverted_index=load_index_from_disk("inverted_index.json")
+else:
+    print("Creating the index...\n")
+    inverted_index=create_inverted_index("data/hindi/")
+    save_index_to_disk(inverted_index)
 
 def data_extraction(inverted_index):
     freq_arr = defaultdict(int)

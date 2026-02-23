@@ -1,5 +1,6 @@
 import os
-from inverted_index import create_inverted_index
+from pathlib import Path
+from inverted_index import create_inverted_index,save_index_to_disk,load_index_from_disk
 
 def vb_encode_number(n):
     bytes_list = []
@@ -56,5 +57,15 @@ def measure_index_compression(inverted_index):
     return compressed_index
 
 if __name__ == "__main__":
-    inverted_index = create_inverted_index("data/")
+
+    inverted_index_file=Path("inverted_index.json")
+    if(inverted_index_file.is_file()):
+        print("Loading from index...\n")
+        inverted_index=load_index_from_disk("inverted_index.json")
+    else:
+        print("Creating the index...\n")
+        inverted_index=create_inverted_index("data/hindi/")
+        save_index_to_disk(inverted_index)
+    inverted_index=create_inverted_index("data/hindi/")
+
     compressed_index = measure_index_compression(inverted_index)

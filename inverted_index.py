@@ -1,6 +1,8 @@
 from collections import defaultdict
 import os
 from preprocessing import tokenization, stemmer, normalization
+import json
+
 
 def create_inverted_index(folder_path):
     inverted_index=defaultdict(dict)
@@ -45,8 +47,6 @@ def create_inverted_index(folder_path):
     return inverted_index
 
 #serialize the the inverted index 
-import json
-import os
 
 def save_index_to_disk(inverted_index, filename="inverted_index.json"):
     with open(filename, "w", encoding="utf-8") as file:

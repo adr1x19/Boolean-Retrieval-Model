@@ -3,7 +3,7 @@ import os
 
 # CONFIGURATION
 LANG = "hi"          # Change to 'ta', 'te', 'bn', etc.
-NUM_ARTICLES = 200    # How many you want
+NUM_ARTICLES = 1000   # How many you want
 OUTPUT_DIR = "data2"  # Where to save
 
 # 1. Setup

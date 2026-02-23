@@ -1,0 +1,8 @@
+data/
+data2/
+inverted_index.json
+Plots/
+Report.docx
+re1.md
+download_data.py
+__pycache__
